@@ -93,7 +93,6 @@ setup(
         "pyparsing>=3.1.1",
         "python-dateutil>=2.8.2",
         "pytz>=2023.3.post1",
-        "pywin32>=305.1",
         "PyYAML>=6.0.1",
         "pyzmq>=23.2.1",
         "querystring-parser>=1.2.4",
