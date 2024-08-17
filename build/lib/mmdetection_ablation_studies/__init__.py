@@ -6,6 +6,8 @@ from .data_processing import *
 from .metrics import *
 from .model_inference import *
 from .visualisation import *
+from .compute_giou_f1_results import *
+from .print_giou_f1_results import *
 
 from .coco import build
 

@@ -66,22 +66,22 @@ def compute_single_wise_ablations_percentage(
         save_path = f"{PATH_SAVE_DIR}model_{ablation_component}_single_wise_{ablation_percentage}_{i}.pth"
         torch.save(model, save_path)
 
-def compute_attention_head_ablations_percentage(
+def compute_attention_head_detr_ablations_percentage(
         PATH_CHECKPOINT_FILE,
         ablation_percentage=5,
-        ablation_component="encoder.layers.{layer}.self_attn.attn.in_proj_weight",
+        ablation_component_template="encoder.layers.{layer}.self_attn.attn.in_proj_weight",
         layers_to_ablate=range(6),
         number_of_ablations=1,
         PATH_SAVE_DIR=None):
     """
-    This function performs targeted ablations on attention heads within specified mmdetection model by setting a percentage of 
+    This function performs targeted ablations on attention heads within a specified model by setting a percentage of 
     their parameters to zero. The ablation is applied to the specified layers of the model's attention mechanism, 
     specifically to the attention projection weights.
 
     Parameters:
     - PATH_CHECKPOINT_FILE: str, Path to the model's checkpoint file.
     - ablation_percentage: int, The percentage of the component's values to be ablated.
-    - ablation_component: str, The name of the component to be ablated (e.g., a specific layer or weight matrix).
+    - ablation_component_template: str, The name of the component to be ablated with placeholder for iteration.
     - layers_to_ablate: list or range, The layers to ablate (e.g., range(6) for layers 0 to 5).
     - number_of_ablations: int, The number of ablated versions of the model to generate.
     - PATH_SAVE_DIR: str, The directory where the ablated models will be saved.
@@ -97,10 +97,12 @@ def compute_attention_head_ablations_percentage(
 
     for i in range(number_of_ablations):
         ablated_checkpoint = deepcopy(model)
-
+        
         for layer in layers_to_ablate:
-            component = ablation_component.format(layer=layer)
-            weights = model['state_dict'][component]
+            ablation_component = ablation_component_template.format(layer=layer)
+            component = ablated_checkpoint['state_dict'][ablation_component]
+
+            weights = component
             modified_weights = weights.clone()
 
             head_indices_to_ablate = random.sample(range(total_heads), total_heads_to_ablate)
@@ -112,10 +114,11 @@ def compute_attention_head_ablations_percentage(
                 end_col = start_col + 32
                 modified_weights[row, start_col:end_col] = 0
 
-            ablated_checkpoint['state_dict'][component] = modified_weights
+            ablated_checkpoint['state_dict'][ablation_component] = modified_weights
 
-        save_path = f"{PATH_SAVE_DIR}model_{ablation_component}_attention_head_{ablation_percentage}_{i}.pth"
+        save_path = os.path.join(PATH_SAVE_DIR, f"model_{i}_attention_head_{ablation_percentage}.pth")
         torch.save(ablated_checkpoint, save_path)
+        print(f"Saved ablated model to {save_path}")
 
 def compute_component_wise_full_ablations(
         PATH_CHECKPOINT_FILE,
