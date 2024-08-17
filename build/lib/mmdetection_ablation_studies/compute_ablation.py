@@ -116,9 +116,9 @@ def compute_attention_head_detr_ablations_percentage(
 
             ablated_checkpoint['state_dict'][ablation_component] = modified_weights
 
-        save_path = os.path.join(PATH_SAVE_DIR, f"model_{i}_attention_head_{ablation_percentage}.pth")
+        save_path = os.path.join(PATH_SAVE_DIR, f"model_" + ablation_component_template.replace(".{layer}", "") + f"_attention_head_{ablation_percentage}_{i}.pth")
         torch.save(ablated_checkpoint, save_path)
-        print(f"Saved ablated model to {save_path}")
+        print(f"Iteration {i+1} / {number_of_ablations}")
 
 def compute_component_wise_full_ablations(
         PATH_CHECKPOINT_FILE,
