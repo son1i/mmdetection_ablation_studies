@@ -18,7 +18,7 @@
 To install the `mmdetection-ablation-studies` package, clone the repository and install it using pip:
 
 ```bash
-git clone https://github.com/yourusername/mmdetection-ablation-studies.git
+git clone https://github.com/son1i/mmdetection-ablation-studies.git
 cd mmdetection-ablation-studies
 pip install -e .
 ```
